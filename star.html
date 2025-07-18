@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Danhz"</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background-image:url(./img/bg.jpg);
+      }
+
+      #scene {
+        width: 100vw;
+        height: 100vh;
+        perspective: 1000px;
+        transform-style: preserve-3d;
+        position: relative;
+      }
+
+      .layer {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        transform-style: preserve-3d;
+      }
+
+      .falling-text {
+        position: absolute;
+        color: rgb(239, 23, 131);
+        font-weight: bold;
+        font-size: 20px;
+        animation: fall linear forwards;
+        text-shadow: 0 0 5px #6b054e, 0 0 10px #650636, 0 0 20px #760642;
+        white-space: nowrap;
+        transform: none;
+      }
+
+      @keyframes fall {
+        0% {
+          transform: translateY(-100px);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(110vh);
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="scene">
+      <div class="layer" id="layer-near"></div>
+      <div class="layer" id="layer-mid"></div>
+      <div class="layer" id="layer-far"></div>
+    </div>
+
+    <script>
+      function createFallingText(layer, size, speed, opacity) {
+        const text = document.createElement("div");
+        text.classList.add("falling-text");
+        text.textContent = "NGuyễn Trang Siu Xinh Gái >.<";
+
+        const x = Math.random() * window.innerWidth;
+        const duration = speed + Math.random() * 2;
+
+        text.style.left = `${x}px`;
+        text.style.fontSize = `${size}px`;
+        text.style.opacity = opacity;
+        text.style.animationDuration = `${duration}s`;
+
+        layer.appendChild(text);
+
+        setTimeout(() => {
+          if (text.parentNode) layer.removeChild(text);
+        }, duration * 1000);
+      }
+
+      const near = document.getElementById("layer-near");
+      const mid = document.getElementById("layer-mid");
+      const far = document.getElementById("layer-far");
+
+      // Rơi nhanh, to, rõ – lớp gần
+      setInterval(() => createFallingText(near, 25, 4, 2), 1050);
+      // Rơi vừa, mờ – lớp giữa
+      setInterval(() => createFallingText(mid, 24, 5, 0.5), 300);
+      // Rơi chậm, nhỏ, rất mờ – lớp xa
+      setInterval(() => createFallingText(far, 19, 6, 3), 3000);
+
+      // Xoay toàn cảnh khi kéo chuột
+      let isDragging = false;
+      let lastX, lastY;
+      let rotX = 0,
+        rotY = 0;
+
+      const scene = document.getElementById("scene");
+      scene.addEventListener("mousedown", (e) => {
+        isDragging = true;
+        lastX = e.clientX;
+        lastY = e.clientY;
+      });
+
+      window.addEventListener("mouseup", () => {
+        isDragging = false;
+      });
+
+      window.addEventListener("mousemove", (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - lastX;
+        const dy = e.clientY - lastY;
+        rotY += dx * 0.3;
+        rotX -= dy * 0.3;
+        scene.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+        lastX = e.clientX;
+        lastY = e.clientY;
+      });
+    </script>
+  </body>
+</html>
