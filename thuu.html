@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Thư Gập 3D + Tim Bay + Đốm Sáng Vĩnh Viễn</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f0c5eb;
+      perspective: 800px;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .envelope {
+      position: relative;
+      top: 100px;
+      width: 400px;
+      height: 250px;
+      background: #fff;
+      border: 2px solid #e91e63;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+      transition: transform 1s ease;
+    }
+
+    .envelope.open {
+      transform: scale(1.1);
+    }
+
+    .flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 200px solid transparent;
+      border-right: 200px solid transparent;
+      border-top: 150px solid rgb(245, 85, 210);
+      transform-origin: top center;
+      transform: rotateX(0deg);
+      transition: transform 0.8s ease;
+      z-index: 10;
+    }
+
+    .flap2, .flap3, .flap4 {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .flap2 {
+      border-bottom: 100px solid transparent;
+      border-right: 400px solid #b329b0;
+      border-top: 150px solid transparent;
+    }
+
+    .flap3 {
+      border-bottom: 100px solid transparent;
+      border-left: 400px solid #b329b0;
+      border-top: 150px solid transparent;
+    }
+
+    .flap4 {
+      border-top: 130px solid #eda3ed;
+      border-bottom: 121px solid #d336d1;
+      border-right: 200px solid transparent;
+      border-left: 200px solid transparent;
+    }
+
+    .flap.opened {
+      transform: rotateX(180deg);
+    }
+
+    .heart-button {
+      position: relative;
+      width: 50px;
+      height: 45px;
+      background-color: red;
+      border: none;
+      cursor: pointer;
+      transform: rotate(-45deg);
+      margin-top: 200px;
+      transition: transform 1s ease, opacity 1s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+
+    .heart-button::before,
+    .heart-button::after {
+      content: "";
+      position: absolute;
+      width: 50px;
+      height: 45px;
+      background-color: red;
+      border-radius: 50%;
+    }
+
+    .heart-button::before {
+      top: -25px;
+      left: 0;
+    }
+
+    .heart-button::after {
+      left: 25px;
+      top: 0;
+    }
+
+    .heart-button span {
+      transform: rotate(45deg);
+      z-index: 1;
+      color: white; 
+    }
+
+    .heart-button.hide {
+      transform: rotate(-45deg) translateY(100px);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .flying-heart {
+      position: absolute;
+      width: 12px;
+      height: 10px;
+      background: red;
+      transform: rotate(-45deg);
+      animation: flyUp 3s linear forwards;
+      opacity: 0.9;
+    }
+
+    .flying-heart::before,
+    .flying-heart::after {
+      content: "";
+      position: absolute;
+      width: 12px;
+      height: 10px;
+      background: red;
+      border-radius: 50%;
+    }
+
+    .flying-heart::before {
+      top: -6px;
+      left: 0;
+    }
+
+    .flying-heart::after {
+      top: 0;
+      left: 6px;
+    }
+
+    @keyframes flyUp {
+      0% {
+        transform: translateY(0) scale(1) rotate(-45deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-700px) scale(1.3) rotate(-45deg);
+        opacity: 0;
+      }
+    }
+
+    .letter-content {
+      position: absolute;
+      bottom: 80px;
+      left: 20px;
+      right: 20px;
+      padding: 20px;
+      background: #e7a8c9;
+      border-radius: 10px;
+      font-style: italic;
+      font-size: 18px;
+      opacity: 0;
+      transform: translateY(20px) scale(0.95);
+      transition: opacity 1s ease, transform 1s ease;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .letter-content.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .glow-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .glow-dot {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: radial-gradient(rgb(240, 238, 129), transparent);
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: glow 2s linear forwards;
+    }
+
+    @keyframes glow {
+      0% {
+        transform: scale(0.5) translateY(0);
+        opacity: 0.9;
+      }
+      100% {
+        transform: scale(1.5) translateY(-60px);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="envelope" id="envelope">
+      <div class="flap" id="flap"></div>
+      <div class="flap2"></div>
+      <div class="flap3"></div>
+      <div class="flap4"></div>
+      <div class="letter-content" id="letterContent">
+        <p>Gửi bạn iuu,</p>
+        <p>Cho xin 50k đi ạaaa </p>
+        <div class="glow-container" id="glowContainer"></div>
+      </div>
+    </div>
+    
+    <button class="heart-button" id="btn" onclick="openLetter()">
+      <span>Mở thư</span>
+    </button>
+  </div>
+
+  <script>
+    function openLetter() {
+      const flap = document.getElementById("flap");
+      const btn = document.getElementById("btn");
+      const letter = document.getElementById("letterContent");
+      const envelope = document.getElementById("envelope");
+
+      flap.classList.add("opened");
+      envelope.classList.add("open");
+
+      setTimeout(() => {
+        btn.classList.add("hide");
+        letter.classList.add("show");
+        launchHeartsForever();
+        startGlowing();
+      }, 600);
+    }
+
+    function launchHeartsForever() {
+      setInterval(() => {
+        const heart = document.createElement("div");
+        heart.className = "flying-heart";
+        heart.style.left = Math.random() * window.innerWidth + "px";
+        heart.style.bottom = "0px";
+        heart.style.animationDelay = Math.random() * 0.5 + "s";
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 3000);
+      }, 100); // mỗi 100ms tạo 1 trái tim
+    }
+
+    function startGlowing() {
+      const container = document.getElementById("glowContainer");
+      setInterval(() => {
+        const dot = document.createElement("div");
+        dot.className = "glow-dot";
+        dot.style.left = Math.random() * 100 + "%";
+        dot.style.top = Math.random() * 100 + "%";
+        dot.style.animationDelay = (Math.random() * 0.5) + "s";
+        container.appendChild(dot);
+        setTimeout(() => dot.remove(), 2000);
+      }, 15); // tạo dot liên tục
+    }
+  </script>
+
+</body>
+</html>
